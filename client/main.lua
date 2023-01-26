@@ -44,7 +44,7 @@ CreateThread(function()
     end
 
     -- Markers
-    ESX.CreateMarker("joblist", Config.Zones[i], Config.DrawDistance, TranslateCap("access_job_center"), {
+    ESX.CreateMarker("joblist".. i, Config.Zones[i], Config.DrawDistance, TranslateCap("access_job_center"), {
       drawMarker = true,
       key = 38,
        scale = Config.ZoneSize, -- Scale of the marker
