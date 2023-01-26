@@ -22,49 +22,14 @@ function ShowJobListingMenu()
   end)
 end
 
--- Activate menu when player is inside marker, and draw markers
 CreateThread(function()
-  while true do
-    local Sleep = 1500
-
-    local coords = GetEntityCoords(ESX.PlayerData.ped)
-    local isInMarker = false
-
-    for i = 1, #Config.Zones, 1 do
-      local distance = #(coords - Config.Zones[i])
-
-      if distance < Config.DrawDistance then
-        Sleep = 0
-        DrawMarker(Config.MarkerType, Config.Zones[i], 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.ZoneSize.x, Config.ZoneSize.y, Config.ZoneSize.z,
-          Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
-      end
-
-      if distance < (Config.ZoneSize.x / 2) then
-        isInMarker = true
-        if not TextUIdrawing then
-          ESX.TextUI(TranslateCap("access_job_center"))
-          TextUIdrawing = true
-        end
-        if IsControlJustReleased(0, 38) and not menuIsShowed then
-          ShowJobListingMenu()
-          ESX.HideUI()
-        end
-      end
-    end
-
-    if not isInMarker and TextUIdrawing then
-      ESX.HideUI()
-      TextUIdrawing = false
-    end
-
-    Wait(Sleep)
+  while not ESX.PlayerLoaded do 
+    Wait(0)
   end
-end)
 
--- Create blips
-if Config.Blip.Enabled then
-  CreateThread(function()
-    for i = 1, #Config.Zones, 1 do
+  for i = 1, #Config.Zones, 1 do
+    -- Blips 
+    if Config.Blip.Enabled then
       local blip = AddBlipForCoord(Config.Zones[i])
 
       SetBlipSprite(blip, Config.Blip.Sprite)
@@ -77,5 +42,19 @@ if Config.Blip.Enabled then
       AddTextComponentSubstringPlayerName(TranslateCap('blip_text'))
       EndTextCommandSetBlipName(blip)
     end
-  end)
-end
+
+    -- Markers
+    ESX.CreateMarker("joblist", Config.Zones[i], Config.DrawDistance, TranslateCap("access_job_center"), {
+      drawMarker = true,
+      key = 38,
+       scale = Config.ZoneSize, -- Scale of the marker
+       sprite = Config.MarkerType, -- type of the marker
+       colour =  Config.MarkerColor -- R, G, B, A, colour system
+    }, function()
+        if not menuIsShowed then
+          ShowJobListingMenu()
+          ESX.HideUI()
+        end
+    end)
+  end
+end)
