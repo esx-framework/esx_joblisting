@@ -10,11 +10,16 @@ function ShowJobListingMenu()
     end
 
     ESX.OpenContext("right", elements, function(menu, SelectJob)
-      TriggerServerEvent('esx_joblisting:setJob', SelectJob.name)
-      ESX.CloseContext()
-      ESX.ShowNotification(TranslateCap('new_job', SelectJob.title), "success")
-      menuIsShowed = false
-      TextUIdrawing = false
+      if ESX.PlayerData.job.name ~= SelectJob.name then
+          TriggerServerEvent('esx_joblisting:setJob', SelectJob.name)
+          ESX.CloseContext()
+          ESX.ShowNotification(TranslateCap('new_job', SelectJob.title), "success")
+          menuIsShowed = false
+          TextUIdrawing = false
+      else
+          ESX.ShowNotification(TranslateCap('already_recruited', SelectJob.title),
+                               "error")
+      end
     end, function()
       menuIsShowed = false
       TextUIdrawing = false
