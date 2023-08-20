@@ -1,5 +1,6 @@
 Locales['fr'] = {
-  ['new_job'] = 'vous avez un nouveau job !',
-  ['access_job_center'] = 'appuyez sur ~INPUT_PICKUP~ pour \naccéder au Pôle Emploi.',
-  ['job_center'] = 'pôle-Emploi',
+  ['new_job'] = 'Vous avez un nouveau métier: ~b~%s~s~ !',
+  ['access_job_center'] = 'Appuyez sur ~b~[E]~s~ pour ouvrir le sélécteur de métiers.',
+  ['job_center'] = 'Séléctionnez un métier.',
+  ["blip_text"] = "Pôle emploi"
 }
