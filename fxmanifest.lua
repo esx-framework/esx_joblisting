@@ -1,7 +1,7 @@
 fx_version 'bodacious'
 game 'gta5'
 
-description 'ESX Job Listing'
+description 'Provides a way for players to select a job'
 lua54 'yes'
 version '1.0'
 legacyversion '1.9.1'
