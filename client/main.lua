@@ -35,7 +35,7 @@ CreateThread(function()
 
       if distance < Config.DrawDistance then
         Sleep = 0
-        DrawMarker(Config.MarkerType, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.ZoneSize.x, Config.ZoneSize.y, Config.ZoneSize.z,
+        DrawMarker(Config.MarkerType, Config.Zones[i].x, Config.Zones[i].y, Config.Zones[i].z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.ZoneSize.x, Config.ZoneSize.y, Config.ZoneSize.z,
         Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
 
         isNear = distance < (Config.ZoneSize.x / 2)
