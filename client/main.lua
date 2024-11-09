@@ -1,4 +1,4 @@
-local menuIsShowed, TextUIdrawing = false, false
+local menuIsShowed,isNear, TextUIdrawing = false, false, false
 
 function ShowJobListingMenu()
   menuIsShowed = true
@@ -23,43 +23,6 @@ function ShowJobListingMenu()
 end
 
 -- Activate menu when player is inside marker, and draw markers
-CreateThread(function()
-  while true do
-    local Sleep = 1500
-
-    local coords = GetEntityCoords(ESX.PlayerData.ped)
-    local isInMarker = false
-
-    for i = 1, #Config.Zones, 1 do
-      local distance = #(coords - Config.Zones[i])
-
-      if distance < Config.DrawDistance then
-        Sleep = 0
-        DrawMarker(Config.MarkerType, Config.Zones[i], 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.ZoneSize.x, Config.ZoneSize.y, Config.ZoneSize.z,
-          Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
-      end
-
-      if distance < (Config.ZoneSize.x / 2) then
-        isInMarker = true
-        if not TextUIdrawing then
-          ESX.TextUI(TranslateCap("access_job_center"))
-          TextUIdrawing = true
-        end
-        if IsControlJustReleased(0, 38) and not menuIsShowed then
-          ShowJobListingMenu()
-          ESX.HideUI()
-        end
-      end
-    end
-
-    if not isInMarker and TextUIdrawing then
-      ESX.HideUI()
-      TextUIdrawing = false
-    end
-
-    Wait(Sleep)
-  end
-end)
 
 -- Create blips
 if Config.Blip.Enabled then
@@ -76,6 +39,38 @@ if Config.Blip.Enabled then
       BeginTextCommandSetBlipName("STRING")
       AddTextComponentSubstringPlayerName(TranslateCap('blip_text'))
       EndTextCommandSetBlipName(blip)
+
+      ESX.CreatePoint({
+        coords = Config.Zones[i],
+        distance = Config.DrawDistance,
+        onExit = function()
+          ESX.HideUI()
+          isNear = false
+          TextUIdrawing = false
+        end,
+        nearby = function(self)
+         DrawMarker(Config.MarkerType, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.ZoneSize.x, Config.ZoneSize.y, Config.ZoneSize.z,
+            Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
+  
+          isNear = self.currentDistance <= 2.0
+  
+          if isNear and not TextUIdrawing then
+            ESX.TextUI(TranslateCap('access_job_center', ESX.GetInteractKey()))
+            TextUIdrawing = true
+          else
+            if not isNear and TextUIdrawing then
+              ESX.HideUI()
+              TextUIdrawing = false
+            end
+          end
+        end
+      })
     end
   end)
 end
+
+ESX.RegisterInteraction("open_joblisting", function()
+  ShowJobListingMenu()
+end, function()
+  return isNear and not menuIsShowed
+end)
